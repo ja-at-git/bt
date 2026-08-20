@@ -193,7 +193,6 @@ function make_print_command( w, h, context_in )
       for ( let x = 0; x < w ; x++ )
         linedata[x] = data[(x + y*w)*4];
       const packed_bytes = pack_line( linedata );
-      print_array(packed_bytes);
       append( byte_array, [ 0x51, 0x78, 0xa2, 0x00, packed_bytes.length, 0x00, ...packed_bytes, crc8(packed_bytes), 0xff ] );
     }
   }
