@@ -14,17 +14,6 @@ const service_uuid = "0000ae30-0000-1000-8000-00805f9b34fb";
 const tx_uuid = "0000ae01-0000-1000-8000-00805f9b34fb";
 const rx_uuid = "0000ae02-0000-1000-8000-00805f9b34fb";
 
-
-class dummy
-{
-  static writeValueWithoutResponse( array )
-  {
-    return new Promise( resolve => { console.log( "dummy write", array2string(array) ); resolve() } );
-    //return new Promise( resolve => { resolve(); } );
-  }
-}
-
-
 let tx_characteristic = null;
 let rx_characteristic = null;
 
@@ -45,7 +34,7 @@ function write_wrapper( write_array )
   if ( tx_characteristic !== null )
     return tx_characteristic.writeValueWithoutResponse( new Uint8Array( write_array ) );
   else
-    throw new Error( "Cannot write, bluetooth is not properly set" );
+    throw new Error( "Cannot write, bluetooth is not properly set" ); // This should not happen
 }
 
 
@@ -118,7 +107,6 @@ function check_response( data )
 
     if ( data[2] === 0xa3 )
       document.dispatchEvent( new CustomEvent( 'printerState', { "detail": payload } ) );
-
   }
   else
     console.log( "Error checking response", array2string( data ) );
@@ -141,7 +129,7 @@ function append ( byte_array, command_array ) // Append command to array
   if (check_cmd( command_array ))
     byte_array.push( ...command_array );
   else
-    console.log( "Error in command (ignore it)", command_array );
+    console.log( "Error in command (will be ignored)", command_array );
 
   return byte_array;
 }
@@ -245,7 +233,7 @@ function check_device_state()
       if ( event.detail[0] === 0)
         resolve();
       else
-        reject( "Printer is not ready" );
+        reject( new Error( "Printer is not ready" ) );
     }
     , { once: true } );
 
