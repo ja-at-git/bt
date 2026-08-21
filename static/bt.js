@@ -20,7 +20,7 @@ let rx_characteristic = null;
 const buffer_mtu = 240;
 let buffer_index = 0;
 let buffer_data;
-const buffer_delay = 70;
+const buffer_delay = 75;
 
 
 function delay( ms )
