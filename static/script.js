@@ -11,7 +11,7 @@ setInterval( () => { document.title = mode; } , 300);
 
 const photo = document.getElementById( "photo" );
 const splash = document.getElementById( "splash" );
-const video = document.getElementById("video");
+const video = document.getElementById( "video" );
 
 const canvas_webcam = document.createElement( "canvas" );
 const context_webcam = canvas_webcam.getContext( "2d", {willReadFrequently: true} );
@@ -37,7 +37,7 @@ function set_photo( success_msg )
     notyf.success( success_msg );
 
   convert2gray( context_webcam, canvas_webcam.width, canvas_webcam.height, context_gray );
-  photo.setAttribute( "src", canvas_gray.toDataURL("image/png") );
+  photo.setAttribute( "src", canvas_gray.toDataURL( "image/png" ) );
 
   splash.style.opacity = 0;
   video.style.opacity = 0;
@@ -74,7 +74,7 @@ function set_dither( success_msg )
     notyf.success( success_msg );
 
   convert2dither( canvas_gray, canvas_dither.width, canvas_dither.height, context_dither )
-  photo.setAttribute( "src", canvas_dither.toDataURL("image/png") );
+  photo.setAttribute( "src", canvas_dither.toDataURL( "image/png" ) );
 
   mode = "dither";
 }
@@ -142,7 +142,7 @@ window.addEventListener( "pointerup", e=>
 
 function click()
 {
-  document.documentElement.requestFullscreen().catch( (err) => { notyf.error( "Failed to enter full screen: " + err.message ); } );
+  //document.documentElement.requestFullscreen().catch( (err) => { notyf.error( "Failed to enter full screen: " + err.message ); } );
   if ( mode==="splash" )
     start_video();
   else if ( mode==="video" )
@@ -153,7 +153,7 @@ function click()
 
 function adjust_param( param_name, param_setter, up )
 {
-  if ( mode ==="photo" )
+  if ( mode==="photo" )
     set_photo( param_name + " is " + param_setter( up ).toString() );
   else
   {
@@ -170,7 +170,7 @@ function swipeV( up, xpos )
     if ( xpos < 0.333 )
       if ( mode==="photo" )
         adjust_param( "Sharpness Gray", adjust_sharpnessG, up )
-      else // mode === "dither"
+      else // mode==="dither"
         adjust_param( "Sharpness Dither", adjust_sharpnessD, up )
     else if ( xpos < 0.667 )
       adjust_param( "Constrast", adjust_contrast, up )
@@ -185,11 +185,11 @@ function swipeV( up, xpos )
   else if ( mode==="splash" )
   {
     mode = "loading";
-    const input = document.createElement("input");
+    const input = document.createElement( "input" );
     input.type = "file";
     input.accept = "image/*";
 
-    input.addEventListener("change", (event) =>  
+    input.addEventListener( "change", (event) =>  
     {
       const reader = new FileReader();
       reader.onload = (e) =>
@@ -202,7 +202,7 @@ function swipeV( up, xpos )
       { reader.readAsDataURL( event.target.files[0] ); }
       catch { (error) => notyf.error( "Error reading file" ) };
     } );
-    input.addEventListener("cancel", (event) => { set_splash( "File selection was cancelled" ) });
+    input.addEventListener( "cancel", (event) => { set_splash( "File selection was cancelled" ) });
     input.click();
   }
 }
@@ -298,15 +298,26 @@ function draw_webcam(img, w, h)
   w = Math.round( w*scale );
   h = Math.round( h*scale );
 
-  const rotation =  (w > h) !== (window.innerWidth > window.innerHeight); // image orientation is different from screen orientation
+  const rotation = (w > h) !== (window.innerWidth > window.innerHeight); // image orientation is different from screen orientation
+  const landscape_screen = (window.innerWidth > window.innerHeight);
 
   if (rotation)
   {
     canvas_webcam.width = h;
     canvas_webcam.height = w;
     context_webcam.save();
-    context_webcam.translate( h, 0 );
-    context_webcam.rotate( Math.PI/2 );
+
+    if ( landscape_screen )
+    {
+      context_webcam.translate( h, 0 );
+      context_webcam.rotate( Math.PI/2 );
+    }
+    else
+    {
+      context_webcam.translate( 0, w );
+      context_webcam.rotate( -Math.PI/2 );
+    }
+
     context_webcam.drawImage( img, 0, 0, w, h );
     context_webcam.restore();
   }
@@ -320,20 +331,72 @@ function draw_webcam(img, w, h)
   canvas_gray.width = canvas_webcam.width;
   canvas_gray.height = canvas_webcam.height;
 
-  if ( canvas_webcam.width > canvas_webcam.height ) // landscape
+  if ( landscape_screen )
   {
-    canvas_dither.width = Math.round( PRINT_SIZE * canvas_webcam.width / canvas_webcam.height );
+    canvas_dither.width = Math.round( PRINT_SIZE * canvas_webcam.width/canvas_webcam.height );
     canvas_dither.height = PRINT_SIZE;
   }
-  else  // portrait
+  else  // portrait screen
   {
     canvas_dither.width = PRINT_SIZE;
-    canvas_dither.height = Math.round( PRINT_SIZE * canvas_webcam.height / canvas_webcam.width );
+    canvas_dither.height = Math.round( PRINT_SIZE * canvas_webcam.height/canvas_webcam.width );
   }
 
   set_photo();
 }
 
+
+function orient_webcam()
+{
+  const w = canvas_webcam.width;
+  const h = canvas_webcam.height;
+
+  const rotation = (w > h) !== (window.innerWidth > window.innerHeight); // image orientation is different from screen orientation
+  const landscape_screen = (window.innerWidth > window.innerHeight);
+
+  if (rotation)
+  {
+    context_gray.drawImage( canvas_webcam, 0, 0, w, h ); // Copy image into gray context (used as temp buffer)
+
+    canvas_webcam.width = h;
+    canvas_webcam.height = w;
+    context_webcam.save();
+
+    if ( landscape_screen )
+    {
+      context_webcam.translate( h, 0 );
+      context_webcam.rotate( Math.PI/2 );
+
+      canvas_dither.width = Math.round( PRINT_SIZE*h/w );
+      canvas_dither.height = PRINT_SIZE;
+    }
+    else
+    {
+      context_webcam.translate( 0, w );
+      context_webcam.rotate( -Math.PI/2 );
+
+      canvas_dither.width = PRINT_SIZE;
+      canvas_dither.height = Math.round( PRINT_SIZE*w/h );
+    }
+
+    context_webcam.drawImage( canvas_gray, 0, 0, w, h ); // Put back original image from gray context used as temp buffer
+    context_webcam.restore();
+
+    canvas_gray.width = h;
+    canvas_gray.height = w;
+
+    if ( mode==="photo" )
+    { set_photo( "Orientation modified" ); }
+    else if ( mode==="dither" )
+    {
+      set_photo( "Orientation modified" );
+      set_dither();
+    }
+
+  }
+}
+
+window.addEventListener( "resize", orient_webcam );
 
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
