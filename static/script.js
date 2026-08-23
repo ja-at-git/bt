@@ -142,11 +142,9 @@ window.addEventListener( "pointerup", e=>
 
 function click()
 {
+  document.documentElement.requestFullscreen().catch( (err) => { notyf.error( "Failed to enter full screen: " + err.message ); } );
   if ( mode==="splash" )
-  {
-    document.documentElement.requestFullscreen().catch( (err) => { set_splash( "Failed to enter full screen: " + err.message ); } );
     start_video();
-  }
   else if ( mode==="video" )
     draw_webcam( video, video.videoWidth, video.videoHeight );
   else if ( mode==="photo" && video.readyState )
@@ -201,9 +199,7 @@ function swipeV( up, xpos )
         img.src = e.target.result;
       };
       try
-      {
-        reader.readAsDataURL( event.target.files[0] );
-      }
+      { reader.readAsDataURL( event.target.files[0] ); }
       catch { (error) => notyf.error( "Error reading file" ) };
     } );
     input.addEventListener("cancel", (event) => { set_splash( "File selection was cancelled" ) });
@@ -217,10 +213,7 @@ function swipeH( left, ypos )
   if ( mode==="splash" )
   {
     if ( left )
-    {
-      document.documentElement.requestFullscreen().catch( (err) => { set_splash( "Failed to enter full screen: " + err.message ); } );
       start_video();
-    }
   }
   else if ( mode==="video" )
   {
@@ -285,7 +278,7 @@ function start_video() {
       return video.play();
     } )
     .then ( () => { set_video( "Resolution is " + video.videoWidth.toString() + "x" + video.videoHeight.toString() ); } )
-    .catch((err) => { set_splash( `Failed to access camera: ${err.message}` ); });
+    .catch( (err) => { set_splash( `Failed to access camera: ${err.message}` ); } );
   }
   else
     set_splash( "Your browser does not support camera capture!" );
