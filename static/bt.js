@@ -14,17 +14,6 @@ const service_uuid = "0000ae30-0000-1000-8000-00805f9b34fb";
 const tx_uuid = "0000ae01-0000-1000-8000-00805f9b34fb";
 const rx_uuid = "0000ae02-0000-1000-8000-00805f9b34fb";
 
-
-class dummy
-{
-  static writeValueWithoutResponse( array )
-  {
-    return new Promise( resolve => { console.log( "dummy write", array2string(array) ); resolve() } );
-    //return new Promise( resolve => { resolve(); } );
-  }
-}
-
-
 let tx_characteristic = null;
 let rx_characteristic = null;
 
