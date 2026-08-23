@@ -142,7 +142,7 @@ window.addEventListener( "pointerup", e=>
 
 function click()
 {
-  //document.documentElement.requestFullscreen().catch( (err) => { notyf.error( "Failed to enter full screen: " + err.message ); } );
+  document.documentElement.requestFullscreen().catch( (err) => { notyf.error( "Failed to enter full screen: " + err.message ); } );
   if ( mode==="splash" )
     start_video();
   else if ( mode==="video" )
