@@ -6,7 +6,7 @@ html, body {
   height: 100vh;
   overflow: hidden;
   background: black;
-  touch-action: none;  /* Evite que les swipes soient interprétés par le navigateur (transformation desévènements pointerup en pointercancel) */ 
+  touch-action: none;  /* Evite que les swipes soient interprétés par le navigateur (transformation des évènements pointerup en pointercancel) */ 
 }
 
 
