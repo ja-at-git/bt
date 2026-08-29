@@ -227,7 +227,7 @@ function swipeH( left, ypos )
   }
   else if ( mode==="photo" )
   {
-    if ( ypos < 0.20 )
+    if ( ypos < 0.25 )
       set_photo( "Clip limit is " + adjust_clip( left ).toString() );
     else
     {
@@ -244,9 +244,14 @@ function swipeH( left, ypos )
   }
   else if ( mode==="dither" )
   {
-    if ( ypos < 0.20 )
+    if ( ypos < 0.25 )
+    {
+      set_photo( "Clip limit is " + adjust_clip( left ).toString() );
+      set_dither();
+    }
+    else if ( ypos < 0.50 )
       set_dither( "Threshold is " + adjust_threshold( left ).toString() );
-    else if ( ypos < 0.60 )
+    else if ( ypos < 0.75 )
       set_dither( "Algo is " + change_algo( left ) );
     else
     {
