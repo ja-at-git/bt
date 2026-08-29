@@ -227,14 +227,19 @@ function swipeH( left, ypos )
   }
   else if ( mode==="photo" )
   {
-    if ( left )
-      set_dither();
+    if ( ypos < 0.20 )
+      set_photo( "Clip limit is " + adjust_clip( left ).toString() );
     else
-    { 
-      if ( video.readyState )
-        set_video();
+    {
+      if ( left )
+        set_dither();
       else
-        set_splash();
+      { 
+        if ( video.readyState )
+          set_video();
+        else
+          set_splash();
+      }
     }
   }
   else if ( mode==="dither" )
