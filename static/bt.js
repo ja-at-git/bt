@@ -205,8 +205,8 @@ function make_print_command( w, h, context_in )
 
   // Set speed to 0x0a = 10
   append( byte_array, build_command( 0xbd, [0x0a] ) );
-  // Feed paper (0x30 = 48)
-  append( byte_array, build_command( 0xa1, [0x40, 0x00] ) );
+  // Feed paper (0x38 = 56)
+  append( byte_array, build_command( 0xa1, [0x38, 0x00] ) );
   // End lattice
   append( byte_array, build_command( 0xa6, [0xaa, 0x55, 0x17, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x17] ) );
 
