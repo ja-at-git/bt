@@ -14,6 +14,7 @@ let contrast = 1;
 let gamma = 1;
 let sharpnessG = 0;
 let sharpnessD = 0;
+let clipLimit = 2;
 
 function adjust_contrast( up )
 {
@@ -29,7 +30,7 @@ function adjust_gamma( up )
 
 function adjust_sharpnessG( up )
 {
-  sharpnessG += up ? +0.10 : -0.10;
+  sharpnessG += up ? +0.05 : -0.05;
   return sharpnessG.toFixed(2);
 }
 
@@ -37,6 +38,12 @@ function adjust_sharpnessD( up )
 {
   sharpnessD += up ? +0.02 : -0.02;
   return sharpnessD.toFixed(2);
+}
+
+function adjust_clip( left )
+{
+  clipLimit += left ? +0.4 : -0.4;
+  return clipLimit.toFixed(2);
 }
 
 function convert2gray( context_in, w, h, context_out )
@@ -130,7 +137,6 @@ function clahe( gray, width, height )
 
   const tilesX = 8;
   const tilesY = 8;
-  const clipLimit = 2;
 
   const result = new Float32Array( gray.length );
   const tileWidth = width/tilesX;
