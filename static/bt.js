@@ -240,7 +240,23 @@ function check_device_state()
       if ( event.detail[0] === 0)
         resolve();
       else
-        reject( new Error( "Printer is not ready" ) );
+      {
+        let err_msg =  "Printer is not ready:";
+        if ( event.detail[0] & 0x01 )
+          err_msg += " Out of paper.";
+        if ( event.detail[0] & 0x02 )
+          err_msg += " Cover is open.";
+        if ( event.detail[0] & 0x04 )
+          err_msg += " Overheated.";
+        if ( event.detail[0] & 0x08 )
+          err_msg += " Low battery.";
+        if ( event.detail[0] & 0x10 )
+          err_msg += " Currently charging.";
+        if ( event.detail[0] & 0x80 )
+          err_msg += " Currently printing.";
+
+        reject( new Error( err_msg ) );
+      }
     }
     , { once: true } );
 
