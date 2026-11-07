@@ -90,7 +90,7 @@ function set_dither( success_msg )
 
 const notyf = new Notyf(
 {
-  duration: 1200,
+  duration: 1700,
   ripple: false,
   position: { x: 'center', y: 'bottom' }
 } );
